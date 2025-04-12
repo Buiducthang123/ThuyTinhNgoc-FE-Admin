@@ -1,0 +1,35 @@
+# Thư mục build và runtime
+.nuxt
+.output
+
+# node_modules chứa thư viện, không cần push
+node_modules
+
+# File cấu hình môi trường
+.env
+.env.*
+
+# File lock của package managers (tuỳ chọn, có thể giữ lại để đồng bộ version)
+# yarn.lock
+# package-lock.json
+# pnpm-lock.yaml
+
+# Log file
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Hệ điều hành / IDE
+.DS_Store
+Thumbs.db
+*.swp
+.idea
+.vscode
+*.sublime*
+
+# Caching
+.cache/
+coverage/
+*.local
+
+
