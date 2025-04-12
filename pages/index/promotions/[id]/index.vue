@@ -88,7 +88,7 @@ import type { IPromotion } from '~/interfaces/promotion';
 const route = useRoute();
 
 const promotionQuery = reactive({
-    
+    with: ['products'],
 });
 
 const { data: promotion } = await useFetch<IPromotion>(`/api/promotions/${route.params.id}`, {

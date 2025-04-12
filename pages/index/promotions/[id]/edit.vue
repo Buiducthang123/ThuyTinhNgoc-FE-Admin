@@ -55,7 +55,7 @@
                 <!--search-->
                 <div class="flex gap-10 mb-6">
                     <a-input v-model:value="allProductSearch" placeholder="Tìm kiếm sản phẩm" />
-                    <a-button type="primary" @click="handleSearchTitleAllProduct">Tìm kiếm</a-button>
+                    <a-button  type="primary" @click="handleSearchTitleAllProduct">Tìm kiếm</a-button>
                 </div>
                 <a-checkbox-group v-model:value="formEdit.items" class="w-full">
                     <div ref="refScrollContainer" class="max-h-[40vh] overflow-y-scroll w-full border p-4"
@@ -185,8 +185,7 @@ const productQuery = reactive({
 const allProductSearch = ref('')
 
 const handleSearchTitleAllProduct = () => {
-    productQuery.search.title = allProductSearch.value;
-
+    productQuery.search.title = allProductSearch.value.trim();
 }
 
 const allProductsAfterSearch = ref<IProduct[]>([]);
@@ -199,7 +198,7 @@ const { data: products, refresh: refreshProducts } = await useFetch<IResponsePag
     query: productQuery,
     onResponse: ({ response }) => {
         if (response.ok) {
-            allProducts.value = [...allProducts.value, ...(response._data.data ?? [])];
+            allProducts.value = [...allProducts.value,...(response._data.data ?? [])];
             if(productQuery.search.title != ''){
                 allProductsAfterSearch.value = response._data.data ?? [];
             }
@@ -218,6 +217,18 @@ const handleScroll = (e: Event) => {
         refreshProducts();
     }
 };
+
+watch(allProducts, (newVal) => {
+    const uniqueIds = new Set<number>();
+    allProducts.value = newVal.filter((product) => {
+        if (uniqueIds.has(product.id)) {
+            return false;
+        } else {
+            uniqueIds.add(product.id);
+            return true;
+        }
+    });
+});
 
 
 const handleUpdatePromotion = async () => {
