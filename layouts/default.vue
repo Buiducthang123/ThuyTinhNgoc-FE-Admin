@@ -90,7 +90,7 @@ const items: ItemType[] = reactive([
         getItem('Tạo mới', '/promotions/create'),
     ]),
     
-    getItem('Quản lý xuất nhập sách', '/product-transactions', h(AppstoreOutlined)),
+    getItem('Quản lý xuất nhập', '/product-transactions', h(AppstoreOutlined)),
 
     getItem('Quản lý thanh toán', '/payments', h(RiseOutlined)),
 

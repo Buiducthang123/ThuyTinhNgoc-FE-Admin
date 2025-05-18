@@ -21,7 +21,10 @@
                                 accountSelected = record as IUser
                             }">Phê duyệt</a-button>
                         </a-popconfirm>
-                        <a-button danger>Xóa</a-button>
+                        
+                        <a-popconfirm title="Xóa tài khoản này ?" @confirm="handleDeleteUser(record.id)">
+                            <a-button danger>Xóa</a-button>
+                        </a-popconfirm>
                     </a-space>
                 </template>
             </template>
@@ -229,6 +232,24 @@ const handleUpdate = async () => {
             }
         },
 
+    })
+}
+
+const handleDeleteUser = async (userId: number) => {
+    await $fetch(`/api/user/` + userId, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${accessToken.value}`
+        },
+        baseURL: config.public.baseURLAPI,
+        onResponse: ({ response }) => {
+            if (response.ok) {
+                message.success('Xóa tài khoản thành công')
+                handleRefresh()
+            } else {
+                message.error('Xóa tài khoản thất bại')
+            }
+        },
     })
 }
 </script>

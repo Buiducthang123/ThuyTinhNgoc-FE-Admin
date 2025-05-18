@@ -1,6 +1,6 @@
 <template>
     <div class="px-6 py-10">
-        <h3 class="font-bold text-xl mb-6">Quản lý sách</h3>
+        <h3 class="font-bold text-xl mb-6">Quản lý sản phẩm</h3>
         <a-table :columns="columns" :dataSource="products?.data ?? []" rowKey="id" bordered :pagination="false" >
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'id'">

@@ -17,7 +17,9 @@
                 <template v-if="column.dataIndex === 'action'">
                     <a-space>
                         <a-button type="primary" @click="()=>{router.push('/users/update/'+record.id)}">Sửa</a-button>
-                        <a-button danger>Xóa</a-button>
+                        <a-popconfirm title="Xóa tài khoản này ?" @confirm="handleDeleteUser(record.id)">
+                            <a-button danger>Xóa</a-button>
+                        </a-popconfirm>
                     </a-space>
                 </template>
             </template>
@@ -123,7 +125,7 @@ import type { IUser } from '~/interfaces/user';
 const router = useRouter();
 const authStore = useAuthStore();
 const accessToken = computed(() => authStore.accessToken);
-
+const config = useRuntimeConfig();
 const loading = ref(false);
 
 const columns = [
@@ -198,6 +200,24 @@ const handleRefresh = () => {
     refresh();
     params.value.search = '';
     search.value = '';
+}
+
+const handleDeleteUser = async (userId: number) => {
+    await $fetch(`/api/user/` + userId, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${accessToken.value}`
+        },
+        baseURL: config.public.baseURLAPI,
+        onResponse: ({ response }) => {
+            if (response.ok) {
+                message.success('Xóa tài khoản thành công')
+                handleRefresh()
+            } else {
+                message.error('Xóa tài khoản thất bại')
+            }
+        },
+    })
 }
 
 </script>
