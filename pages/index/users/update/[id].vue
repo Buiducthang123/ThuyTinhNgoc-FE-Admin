@@ -59,7 +59,7 @@
                 </div>
 
                 <a-form-item class="mt-10">
-                    <a-button type="primary" html-type="submit" size="large">Lưu lại</a-button>
+                    <a-button type="primary" html-type="submit" size="large" :loading="isLoading">Lưu lại</a-button>
                 </a-form-item>
             </a-form>
             <div>
@@ -86,6 +86,7 @@ const authStore = useAuthStore();
 const accessToken = computed(() => authStore.accessToken);
 const config = useRuntimeConfig();
 const route = useRoute();
+const isLoading = ref(false);
 
 const { data: userData } = await useFetch<IUser>('/api/user/'+route.params.id, {
     method: 'GET',
@@ -210,6 +211,7 @@ watch(() => formUpdateUser.role, async (newVal) => {
 const router = useRouter()
 
 const handleUpdate = async () => {
+    isLoading.value = true
     await formRefUpdateUser.value.validate()
 
     if (formUpdateUser.role != companyRoleID.value) {
@@ -230,6 +232,7 @@ const handleUpdate = async () => {
             } else {
                 message.error('Cập nhật thông tin tài khoản thất bại')
             }
+            isLoading.value = false
         },
 
     })

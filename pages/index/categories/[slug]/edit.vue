@@ -81,7 +81,7 @@
                     </div>
 
                     <a-form-item class="mt-10">
-                        <a-button html-type="submit" type="primary" >Lưu lại</a-button>
+                        <a-button html-type="submit" type="primary" :loading="isLoading" >Lưu lại</a-button>
                     </a-form-item>
                 </a-form>
                 <div>
@@ -101,9 +101,11 @@
 
 <script setup lang="ts">
 import type { Rule } from 'ant-design-vue/es/form';
+import Loading from '~/components/Loading.vue';
 import UploadImg from '~/components/UploadImg.vue';
 import type { ICategory } from '~/interfaces/category';
 
+const isLoading = ref(false)
 const formRefUpdateCategory = ref()
 const route = useRoute()
 const query = reactive({
@@ -168,6 +170,7 @@ const authStore = useAuthStore()
 const accessToken = computed(() => authStore.accessToken)
 
 const handleUpdateCategory = async () =>{
+    isLoading.value = true
     await formRefUpdateCategory.value.validate()    
     await $fetch('/api/categories/' + category?.value?.id, {
         baseURL: useRuntimeConfig().public.baseURLAPI,
@@ -183,6 +186,7 @@ const handleUpdateCategory = async () =>{
             else{
                 message.error(response._data.message ?? 'Cập nhật danh mục thất bại')
             }
+            isLoading.value = false
         }
     })
 }

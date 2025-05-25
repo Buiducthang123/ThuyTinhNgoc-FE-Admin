@@ -11,7 +11,7 @@
                     <a-input-password size="large" v-model:value="loginForm.password" placeholder="Mật khẩu" class="rounded-none" />
                 </a-form-item>
                 <a-form-item>
-                    <a-button size="middle" type="primary" html-type="submit" class="w-full font-bold">Đăng nhập</a-button>
+                    <a-button size="middle" type="primary" html-type="submit" class="w-full font-bold" :Loading = "isLoading">Đăng nhập</a-button>
                 </a-form-item>
             </a-form>
             <span class="block w-full text-center text-xs text-blue-500"></span>
@@ -20,8 +20,9 @@
 </template>
 
 <script setup lang="ts">
-
 import type { IUser } from '~/interfaces/user';
+
+const isLoading = ref(false);
 
 const formRef = ref();
 const loginForm = reactive({
@@ -41,6 +42,7 @@ const { setUser, setAccessToken } = authStore;
 
 const handleLogin = async () => {
     try {
+        isLoading.value = true;
         await formRef.value.validate();
         await $fetch<LoginResponse>('/api/login', {
             method: 'POST',
@@ -64,6 +66,9 @@ const handleLogin = async () => {
         })
     } catch (error) {
         console.log('error :>> ', error);
+    }
+    finally {
+        isLoading.value = false;
     }
 };
 

@@ -46,7 +46,7 @@
       </a-form-item>
 
       <a-form-item>
-        <a-button type="primary" html-type="submit">Lưu lại</a-button>
+        <a-button type="primary" html-type="submit" :loading="isLoading">Lưu lại</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -72,6 +72,7 @@ const authStore = useAuthStore();
 const accessToken = computed(() => authStore.accessToken);
 const route = useRoute();
 const router = useRouter();
+const isLoading = ref(false);
 
 const query = {
   'with[]': ['product']
@@ -115,16 +116,27 @@ const rules: Record<string, Rule[]> = {
 };
 
 const handleUpdate = async () => {
-  await formRef.value.validate();
-  await $fetch('/api/product-transactions/' + productTransaction.value?.id, {
-    baseURL: useRuntimeConfig().public.baseURLAPI,
-    method: 'patch',
-    headers: {
-      Authorization: `Bearer ${accessToken.value}`
-    },
-    body: formUpdate
-  });
-  router.push('/product-transactions');
+  try {
+    isLoading.value = true;
+    await formRef.value.validate();
+    await $fetch('/api/product-transactions/' + productTransaction.value?.id, {
+      baseURL: useRuntimeConfig().public.baseURLAPI,
+      method: 'patch',
+      headers: {
+        Authorization: `Bearer ${accessToken.value}`
+      },
+      body: formUpdate
+    });
+    router.push('/product-transactions');
+  }
+  catch (error) {
+    console.error('Có lỗi xảy ra', error);
+    return;
+  }
+  finally {
+    isLoading.value = false;
+  }
+
 };
 
 

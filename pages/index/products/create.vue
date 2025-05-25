@@ -109,7 +109,7 @@
       </a-form-item>
 
       <a-form-item>
-        <a-button type="primary" html-type="submit">Lưu lại</a-button>
+        <a-button type="primary" html-type="submit" :loading="isLoading" >Lưu lại</a-button>
       </a-form-item>
     </a-form>
 
@@ -129,6 +129,7 @@ import type { Rule } from 'ant-design-vue/es/form';
 const router = useRouter();
 const authStore = useAuthStore();
 const accessToken = computed(() => authStore.accessToken);
+const isLoading = ref(false);
 
 const { data: categories } = await useFetch<ICategory[]>('api/categories', {
   baseURL: useRuntimeConfig().public.baseURLAPI,
@@ -179,6 +180,7 @@ const rules: Record<string, Rule[]> = {
 };
 
 const handleCreate = async () => {
+  isLoading.value = true;
   await formRef.value.validate();
   await $fetch('/api/products', {
     baseURL: useRuntimeConfig().public.baseURLAPI,
@@ -191,11 +193,11 @@ const handleCreate = async () => {
       if (response.ok) {
         message.success('Thêm mới sản phẩm thành công');
         router.push('/products');
-
       }
       else{
         message.error(response._data.message || 'Có lỗi xảy ra vui lòng thử lại');
       }
+      isLoading.value = false;
     }
   });
 };

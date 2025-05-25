@@ -22,7 +22,7 @@
                 </UploadImg>
             </a-form-item>
 
-            <a-form-item label="Ảnh minh họa thêm" name="thumbnail" required>
+            <a-form-item label="Ảnh minh họa thêm" name="thumbnail">
                 <ul class="flex gap-4 mb-4">
                     <li v-for="(item, index) in formUpdate.thumbnail" :key="index" class=" relative">
                         <NuxtImg :src="item" alt="Thumbnail"
@@ -113,7 +113,7 @@
             </a-form-item>
 
             <a-form-item>
-                <a-button type="primary" html-type="submit">Lưu lại</a-button>
+                <a-button type="primary" html-type="submit" :loading="isLoading">Lưu lại</a-button>
             </a-form-item>
         </a-form>
 
@@ -135,6 +135,7 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const accessToken = computed(() => authStore.accessToken);
+const isLoading = ref(false);
 
 const query = reactive({
     'with[]': ['category'],
@@ -160,7 +161,7 @@ const formUpdate = reactive({
     title: product.value?.title,
     slug: product.value?.slug,
     cover_image: product.value?.cover_image,
-    thumbnail: product.value?.thumbnail,
+    thumbnail: product.value?.thumbnail || [],
     category_id: product.value?.category_id,
     price: product.value?.price,
     discount: product.value?.discount,
@@ -196,8 +197,10 @@ const rules: Record<string, Rule[]> = {
 };
 
 const handleUpdate = async () => {
-    await formRef.value.validate();
-    await $fetch(`/api/products/${route.params.id}`, {
+    try{
+        isLoading.value = true;
+        await formRef.value.validate();
+        await $fetch(`/api/products/${route.params.id}`, {
         baseURL: useRuntimeConfig().public.baseURLAPI,
         method: 'PATCH',
         headers: {
@@ -206,6 +209,13 @@ const handleUpdate = async () => {
         body: formUpdate
     });
     router.push('/products');
+      
+    } catch (error) {
+        console.error('Error updating product:', error);
+        message.error('Cập nhật sản phẩm thất bại');
+    } finally {
+        isLoading.value = false;
+    }
 };
 
 const handleUploadCoverImage = (url: string) => {
